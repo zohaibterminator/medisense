@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+sqlmodel
+Annotated
+elasticsearch
+python-dotenv
+pandas
+langchain
+langchain-core
+langchain-community
+qdrant-client

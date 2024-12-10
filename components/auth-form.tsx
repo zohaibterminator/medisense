@@ -8,14 +8,24 @@ export function AuthForm({
   children,
   defaultEmail = '',
 }: {
-  action: NonNullable<
-    string | ((formData: FormData) => void | Promise<void>) | undefined
-  >;
+  action?: string | ((formData: FormData) => void | Promise<void>);
   children: React.ReactNode;
   defaultEmail?: string;
 }) {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (typeof action === 'function') {
+      const formData = new FormData(e.currentTarget);
+      action(formData);
+    }
+  };
+
   return (
-    <Form action={action} className="flex flex-col gap-4 px-4 sm:px-16">
+    <Form
+      action={typeof action === 'string' ? action :''}
+      onSubmit={typeof action === 'function' ? handleSubmit : undefined}
+      className="flex flex-col gap-4 px-4 sm:px-16"
+    >
       <div className="flex flex-col gap-2">
         <Label
           htmlFor="email"

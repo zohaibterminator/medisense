@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+//@ts-expect-error
+import { useActionState, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { AuthForm } from '@/components/auth-form';
@@ -15,41 +16,31 @@ export default function Page() {
 
   const [email, setEmail] = useState('');
   const [isSuccessful, setIsSuccessful] = useState(false);
-  const [status, setStatus] = useState<RegisterActionState['status']>('idle');
+
+  const [state, formAction] = useActionState<RegisterActionState, FormData>(
+    register,
+    {
+      status: 'idle',
+    },
+  );
 
   useEffect(() => {
-    if (status === 'user_exists') {
+    if (state.status === 'user_exists') {
       toast.error('Account already exists');
-    } else if (status === 'failed') {
+    } else if (state.status === 'failed') {
       toast.error('Failed to create account');
-    } else if (status === 'invalid_data') {
+    } else if (state.status === 'invalid_data') {
       toast.error('Failed validating your submission!');
-    } else if (status === 'success') {
+    } else if (state.status === 'success') {
       toast.success('Account created successfully');
       setIsSuccessful(true);
       router.refresh();
     }
-  }, [status, router]);
+  }, [state, router]);
 
-  const handleSubmit = async (formData: FormData) => {
-    try {
-      setEmail(formData.get('email') as string);
-      setStatus('in_progress');
-      const result = await register({ status: 'in_progress' }, formData); // Passing state explicitly
-
-      if (result.status === 'success') {
-        setStatus('success');
-      } else if (result.status === 'user_exists') {
-        setStatus('user_exists');
-      } else if (result.status === 'invalid_data') {
-        setStatus('invalid_data');
-      } else {
-        setStatus('failed');
-      }
-    } catch (error) {
-      setStatus('failed');
-      console.error('Error submitting form:', error);
-    }
+  const handleSubmit = (formData: FormData) => {
+    setEmail(formData.get('email') as string);
+    formAction(formData);
   };
 
   return (

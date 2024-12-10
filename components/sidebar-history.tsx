@@ -1,12 +1,12 @@
 'use client';
-
+import useSWR, { mutate } from 'swr';
 import { isToday, isYesterday, subMonths, subWeeks } from 'date-fns';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import type { User } from 'next-auth';
 import { memo, useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import useSWR from 'swr';
+
 
 import {
   CheckCircleFillIcon,
@@ -68,6 +68,7 @@ const PureChatItem = ({
   isActive: boolean;
   onDelete: (chatId: string) => void;
   setOpenMobile: (open: boolean) => void;
+  mutate: (data?: any, shouldRevalidate?: boolean) => Promise<any>; // Add mutate as a prop
 }) => {
   const { visibilityType, setVisibilityType } = useChatVisibility({
     chatId: chat.id,
@@ -138,6 +139,35 @@ const PureChatItem = ({
             <TrashIcon />
             <span>Delete</span>
           </DropdownMenuItem>
+          
+          <DropdownMenuItem
+  className="cursor-pointer"
+  onSelect={() => {
+    const newName = prompt("Enter the new name for the chat:");
+    if (!newName) {
+      toast.error("Rename cancelled or invalid input.");
+      return;
+    }
+
+    try {
+      // Update the local state
+      mutate((chats: Chat[]) =>
+        chats.map((c) =>
+          c.id === chat.id ? { ...c, title: newName } : c
+        )
+      );
+
+      toast.success(`Chat renamed to "${newName}"`);
+    } catch (error: any) {
+      toast.error(`Failed to rename chat: ${error.message}`);
+    }
+  }}
+>
+  <span>Rename</span>
+</DropdownMenuItem>
+
+
+          
         </DropdownMenuContent>
       </DropdownMenu>
     </SidebarMenuItem>
@@ -307,6 +337,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                               setShowDeleteDialog(true);
                             }}
                             setOpenMobile={setOpenMobile}
+                            mutate={mutate} // Pass mutate as a prop
                           />
                         ))}
                       </>
@@ -327,6 +358,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                               setShowDeleteDialog(true);
                             }}
                             setOpenMobile={setOpenMobile}
+                            mutate={mutate} // Pass mutate as a prop
                           />
                         ))}
                       </>
@@ -347,6 +379,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                               setShowDeleteDialog(true);
                             }}
                             setOpenMobile={setOpenMobile}
+                            mutate={mutate} // Pass mutate as a prop
                           />
                         ))}
                       </>
@@ -367,6 +400,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                               setShowDeleteDialog(true);
                             }}
                             setOpenMobile={setOpenMobile}
+                            mutate={mutate} // Pass mutate as a prop
                           />
                         ))}
                       </>
@@ -387,6 +421,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                               setShowDeleteDialog(true);
                             }}
                             setOpenMobile={setOpenMobile}
+                            mutate={mutate} // Pass mutate as a prop
                           />
                         ))}
                       </>

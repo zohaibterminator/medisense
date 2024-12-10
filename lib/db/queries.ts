@@ -45,7 +45,15 @@ export async function createUser(email: string, password: string) {
     throw error;
   }
 }
-
+export async function renameTitleById(
+  {id}:{id:string}
+){
+  try {
+    return await db.insert
+  } catch (error) {
+    
+  }
+}
 export async function saveChat({
   id,
   userId,
@@ -324,3 +332,6 @@ export async function updateChatVisiblityById({
     throw error;
   }
 }
+
+
+

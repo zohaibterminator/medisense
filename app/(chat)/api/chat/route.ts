@@ -15,6 +15,7 @@ import {
   deleteChatById,
   getChatById,
   getDocumentById,
+  renameTitleById,
   saveChat,
   saveDocument,
   saveMessages,
@@ -77,7 +78,8 @@ export async function POST(request: Request) {
   const chat = await getChatById({ id });
 
   if (!chat) { 
-    // const title = await generateTitleFromUserMessage({ message: userMessage });
+     //const title = await generateTitleFromUserMessage({ message: userMessage });
+    //const title = renameTitleById({chatId : id});
     const title = 'New Patient';
     await saveChat({ id, userId: session.user.id, title });
   }

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 //@ts-expect-error
 import { useActionState, useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import axios from 'axios';
 
 import { AuthForm } from '@/components/auth-form';
 import { SubmitButton } from '@/components/submit-button';
@@ -16,6 +17,16 @@ export default function Page() {
 
   const [email, setEmail] = useState('');
   const [isSuccessful, setIsSuccessful] = useState(false);
+  
+  // FastAPI trial
+  // const [data, setData] = useState(null);
+
+  //   useEffect(() => {
+  //       axios.get("http://127.0.0.1:8000/api/tester")
+  //           .then((response) => setData(response.data))
+  //           .catch((error) => console.error(error));
+  //   }, []);
+  // End FastAPI trial
 
   const [state, formAction] = useActionState<LoginActionState, FormData>(
     login,
@@ -46,7 +57,7 @@ export default function Page() {
         <div className="flex flex-col items-center justify-center gap-2 px-4 text-center sm:px-16">
           <h3 className="text-xl font-semibold dark:text-zinc-50">Sign In</h3>
           <p className="text-sm text-gray-500 dark:text-zinc-400">
-            Use your email and password to sign in
+            Use your email and password to sign in.
           </p>
         </div>
         <AuthForm action={handleSubmit} defaultEmail={email}>

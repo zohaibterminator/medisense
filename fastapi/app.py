@@ -11,6 +11,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.get("/")
-def main_func():
+@app.get("/api/tester")
+async def main_func():
     return {"message": "Hello World"}

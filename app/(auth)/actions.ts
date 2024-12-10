@@ -16,7 +16,7 @@ export interface LoginActionState {
 }
 
 export const login = async (
-  _: LoginActionState,
+  _: Partial<LoginActionState>, // Changed type to Partial to handle unused state
   formData: FormData,
 ): Promise<LoginActionState> => {
   try {
@@ -31,15 +31,16 @@ export const login = async (
       redirect: false,
     });
 
-    return { status: 'success' };
+    return { status: 'success' }; // Ensure this matches LoginActionState
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { status: 'invalid_data' };
+      return { status: 'invalid_data' }; // Matches LoginActionState
     }
 
-    return { status: 'failed' };
+    return { status: 'failed' }; // Matches LoginActionState
   }
 };
+
 
 export interface RegisterActionState {
   status:

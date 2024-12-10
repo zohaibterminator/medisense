@@ -53,7 +53,7 @@ export interface RegisterActionState {
 }
 
 export const register = async (
-  _: RegisterActionState,
+  _: Partial<RegisterActionState>, // Made state optional
   formData: FormData,
 ): Promise<RegisterActionState> => {
   try {
@@ -83,3 +83,4 @@ export const register = async (
     return { status: 'failed' };
   }
 };
+

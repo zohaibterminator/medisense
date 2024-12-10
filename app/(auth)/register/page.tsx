@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useActionState, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { AuthForm } from '@/components/auth-form';
@@ -15,31 +15,41 @@ export default function Page() {
 
   const [email, setEmail] = useState('');
   const [isSuccessful, setIsSuccessful] = useState(false);
-
-  const [state, formAction] = useActionState<RegisterActionState, FormData>(
-    register,
-    {
-      status: 'idle',
-    },
-  );
+  const [status, setStatus] = useState<RegisterActionState['status']>('idle');
 
   useEffect(() => {
-    if (state.status === 'user_exists') {
+    if (status === 'user_exists') {
       toast.error('Account already exists');
-    } else if (state.status === 'failed') {
+    } else if (status === 'failed') {
       toast.error('Failed to create account');
-    } else if (state.status === 'invalid_data') {
+    } else if (status === 'invalid_data') {
       toast.error('Failed validating your submission!');
-    } else if (state.status === 'success') {
+    } else if (status === 'success') {
       toast.success('Account created successfully');
       setIsSuccessful(true);
       router.refresh();
     }
-  }, [state, router]);
+  }, [status, router]);
 
-  const handleSubmit = (formData: FormData) => {
-    setEmail(formData.get('email') as string);
-    formAction(formData);
+  const handleSubmit = async (formData: FormData) => {
+    try {
+      setEmail(formData.get('email') as string);
+      setStatus('in_progress');
+      const result = await register({ status: 'in_progress' }, formData); // Passing state explicitly
+
+      if (result.status === 'success') {
+        setStatus('success');
+      } else if (result.status === 'user_exists') {
+        setStatus('user_exists');
+      } else if (result.status === 'invalid_data') {
+        setStatus('invalid_data');
+      } else {
+        setStatus('failed');
+      }
+    } catch (error) {
+      setStatus('failed');
+      console.error('Error submitting form:', error);
+    }
   };
 
   return (
